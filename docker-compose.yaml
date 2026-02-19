@@ -1,0 +1,44 @@
+services:
+  db:
+    container_name: postgres
+    image: postgres:17
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./postgres/init:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+     test: ["CMD", "pg_isready -U postgres"]
+     interval: 10s
+     timeout: 5s
+     retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - .env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  "db_data":
+    name: db_data
+  "rabbitmq_data":
+    name: rabbitmq_data
+
