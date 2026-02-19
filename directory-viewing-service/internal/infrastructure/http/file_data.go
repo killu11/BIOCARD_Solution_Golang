@@ -26,7 +26,7 @@ func NewFileDataHandler(service services.FileDataService) *FileDataHandler {
 }
 
 func (h *FileDataHandler) InitRoutes(mux *mux.Router) {
-	mux.HandleFunc("/{uid}/", h.getRows).Methods("GET")
+	mux.HandleFunc("/{uid}", h.getRows).Methods("GET")
 }
 
 func (h *FileDataHandler) getRows(w http.ResponseWriter, r *http.Request) {
